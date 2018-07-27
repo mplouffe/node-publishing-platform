@@ -6,7 +6,7 @@ const cloudinary = require('cloudinary');
 module.exports = {
     addArticle: (req, res, next) => {
         let { text, title, claps, description } = req.body;
-        if (req.files.image) {
+        if (req.files && req.files.image) {
             cloudinary.uploader.upload(req.files.image.path, (result) => {
                 let obj = {text, title, claps, description, feature_img: result.url != null ? result.url : '' };
                 saveArticle(obj);
@@ -36,21 +36,23 @@ module.exports = {
         }
     },
     getArticle: (req, res, next) => {
-        Article.findById(req.params.id)
-            .populate('author')
-            .populate('comments.author')
-            .exec((err, article) => {
-                if(err)
-                    res.send(err);
-                else if(!article)
-                    res.sendStatus(404);
-                else
-                    res.send(article);
-                next();
-            }).catch(e => {
-                res.sendStatus(400);
-                next();
-            });
+        try{
+            Article.findById(req.params.id)
+                .populate('author')
+                .populate('comments.author')
+                .exec((err, article) => {
+                    if(err)
+                        res.send(err);
+                    else if(!article)
+                        res.sendStatus(404);
+                    else
+                        res.send(article);
+                    next();
+                });
+        }catch(e){
+            res.sendStatus(400);
+            next();
+        }
     },
     getAll: (req, res, next) => {
         Article.find(req.params.id)
@@ -69,17 +71,17 @@ module.exports = {
     clapArticle: (req, res, next) => {
         Article.findById(req.body.article_id).then((article) => {
             return article.clap().then(() => {
-                return res.json({msg: "Done"})
+                return res.json({msg: "Clapped!"})
             })
         }).catch(next);
     },
     commentArticle: (req, res, next) => {
         Article.findById(req.body.article_id).then((article) => {
-            return artile.comment({
+            return article.comment({
                 author: req.body.author_id,
                 text: req.body.comment
             }).then(() => {
-                return res.json({msg: "Done"})
+                return res.json({msg: "Commented!"})
             });
         }).catch(next);
     }

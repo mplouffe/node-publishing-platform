@@ -36,5 +36,9 @@ ArticleSchema.methods.getUserArticle = function(_id) {
         return article;
     });
 }
+ArticleSchema.methods.addAuthor = function(author_id) {
+    this.author = author_id;
+    return this.save();
+}
 
 module.exports = mongoose.model('Article', ArticleSchema);

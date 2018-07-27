@@ -22,3 +22,6 @@ yarn-error.log*
 
 # config
 /config/config.json
+
+# local dev configuations
+.vscode

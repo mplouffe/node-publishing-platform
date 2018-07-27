@@ -14,6 +14,6 @@ module.exports = (router) => {
         .post(usercontroller.addUser);
     
     router
-        .route('user/follow')
+        .route('/user/follow')
         .post(usercontroller.followUser);
 }
